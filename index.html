@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پلتفرم جامع شیمی فیزیک | عباس فتاحی</title>
+    <title>ChemPhys Pro | عباس فتاحی</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- تنظیمات MathJax -->
     <script>
@@ -16,45 +15,39 @@
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
-    <!-- فونت‌های چشم‌نواز: وزیرمتن برای متن‌ها و لاله‌زار برای تیترهای جذاب -->
-    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <!-- فونت‌های چشم‌نواز: وزیرمتن (فارسی)، مونتسرات (انگلیسی) و لاله‌زار -->
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Montserrat:wght@800;900&family=Vazirmatn:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         body { font-family: 'Vazirmatn', sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; overflow: hidden; }
         
-        /* فونت تیترها */
         .font-lalezar { font-family: 'Lalezar', cursive; font-weight: normal; letter-spacing: 0.5px; }
+        .font-en-brand { font-family: 'Montserrat', sans-serif; letter-spacing: -1px; }
         
-        /* سایدبار مدرن */
+        /* سایدبار و دکمه‌ها */
         .sidebar { background: #ffffff; border-left: 1px solid #e2e8f0; }
         .nav-btn { transition: all 0.3s ease; border-right: 4px solid transparent; color: #64748b; font-weight: 600; }
         .nav-active { background: #eff6ff; color: #2563eb; border-right: 4px solid #2563eb; font-weight: 800; }
         .nav-btn:hover:not(.nav-active) { background: #f8fafc; color: #334155; }
         
-        /* کارت‌ها و المان‌ها */
         .main-card { background: #ffffff; border-radius: 1.5rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         
-        /* بک‌گراند آزمایشگاه شیمی با افکت شیشه‌ای و تاریک */
-        .hero-banner { 
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(49, 46, 129, 0.9) 100%), 
-                        url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070&auto=format&fit=crop'); 
-            background-size: cover; 
-            background-position: center; 
-            position: relative; 
-            overflow: hidden; 
+        /* بک‌گراند مدرن و نورانی اختصاصی */
+        .hero-bg {
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.3) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.3) 0px, transparent 50%);
+            position: relative;
+            overflow: hidden;
         }
         
-        /* افکت فرمول‌های شناور در بک‌گراند هدر */
-        .bg-pattern {
-            position: absolute; inset: 0; opacity: 0.15;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='12' fill='%23ffffff' font-family='monospace'%3E%CE%94G%3C/text%3E%3Ctext x='40' y='50' font-size='10' fill='%23ffffff' font-family='monospace'%3E%CE%A8%3C/text%3E%3Ctext x='30' y='15' font-size='10' fill='%23ffffff' font-family='monospace'%3EPV=nRT%3C/text%3E%3C/svg%3E");
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .glass-stat {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
         
         .option-label { transition: all 0.2s; border: 2px solid #f1f5f9; background: #ffffff; cursor: pointer; }
@@ -70,18 +63,18 @@
 </head>
 <body class="flex h-screen">
 
-    <!-- سایدبار (دسکتاپ) -->
+    <!-- سایدبار دسکتاپ -->
     <aside class="sidebar w-72 h-full flex flex-col justify-between hidden lg:flex shrink-0 z-20">
         <div class="overflow-y-auto p-5">
             <div class="text-center mb-8 mt-2">
-                <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-500 text-white rounded-[2rem] flex items-center justify-center text-4xl mx-auto mb-4 shadow-xl shadow-blue-200/50">🔬</div>
-                <h1 class="text-2xl font-lalezar text-slate-800">کنکور پلاس</h1>
-                <p class="text-xs text-blue-600 font-black mt-1 tracking-wider">شیمی فیزیک | کوانتوم</p>
+                <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-500 text-white rounded-[2rem] flex items-center justify-center text-4xl mx-auto mb-4 shadow-xl shadow-blue-200/50">⚗️</div>
+                <h1 class="text-3xl font-en-brand font-black text-slate-800">ChemPhys Pro</h1>
+                <p class="text-xs text-blue-600 font-black mt-2 tracking-wider">بانک تست ارشد و دکتری</p>
             </div>
             
             <nav class="flex flex-col gap-2">
                 <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn nav-active py-3.5 px-4 rounded-xl text-right text-sm flex items-center gap-3">
-                    <span class="text-xl">📊</span> داشبورد آماری
+                    <span class="text-xl">🏠</span> صفحه اصلی
                 </button>
                 <button onclick="switchTab('exam')" id="btn-exam" class="nav-btn py-3.5 px-4 rounded-xl text-right text-sm flex items-center gap-3">
                     <span class="text-xl">⏱️</span> شبیه‌ساز آزمون
@@ -97,8 +90,7 @@
 
         <div class="p-5 border-t border-slate-100 bg-slate-50">
             <div class="bg-gradient-to-br from-indigo-800 to-slate-900 p-4 rounded-2xl text-center text-white shadow-xl relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 text-5xl opacity-10">🧠</div>
-                <div class="text-[10px] text-indigo-300 font-medium mb-1">معماری و توسعه سیستم:</div>
+                <div class="text-[10px] text-indigo-300 font-medium mb-1">طراح و توسعه‌دهنده:</div>
                 <div class="text-xl font-lalezar text-amber-400 mb-2">عباس فتاحی</div>
                 <a href="https://t.me/Abbasfattahi" target="_blank" class="block bg-white/10 hover:bg-white/20 text-center py-2 rounded-xl text-xs font-mono font-bold transition backdrop-blur-sm border border-white/10">@Abbasfattahi</a>
             </div>
@@ -108,105 +100,71 @@
     <!-- محتوای اصلی -->
     <main class="flex-1 h-full overflow-y-auto bg-slate-50 relative scroll-smooth">
         
-        <!-- هدر ثابت موبایل -->
+        <!-- هدر موبایل -->
         <div class="lg:hidden bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 p-3.5 flex justify-between items-center shadow-sm">
             <div>
-                <h1 class="font-lalezar text-slate-800 text-lg">کنکور پلاس</h1>
-                <a href="https://t.me/Abbasfattahi" class="text-[10px] font-bold text-blue-600 block -mt-1">عباس فتاحی</a>
+                <h1 class="font-en-brand font-black text-blue-700 text-xl leading-tight dir-ltr">ChemPhys Pro</h1>
+                <a href="https://t.me/Abbasfattahi" class="text-[10px] font-bold text-slate-500 block">طراح: عباس فتاحی</a>
             </div>
             <select onchange="switchTab(this.value)" id="mobile-nav" class="bg-blue-50 border border-blue-200 text-blue-700 rounded-xl p-2 text-xs font-bold outline-none">
-                <option value="dashboard">📊 داشبورد</option>
+                <option value="dashboard">🏠 صفحه اصلی</option>
                 <option value="exam">⏱️ شبیه‌ساز آزمون</option>
                 <option value="vault">💎 نکات طلایی</option>
                 <option value="bookmarks">🔖 نشان‌شده‌ها</option>
             </select>
         </div>
 
-        <div class="p-4 md:p-8 max-w-6xl mx-auto space-y-6 pb-24 mt-2 lg:mt-0">
+        <div class="p-4 md:p-8 max-w-5xl mx-auto space-y-6 pb-24 mt-2 lg:mt-0">
             
-            <!-- داشبورد آماری -->
+            <!-- داشبورد / صفحه اصلی -->
             <section id="sec-dashboard" class="space-y-6 block">
                 
-                <!-- بنر جدید آزمایشگاهی و شیشه‌ای -->
-                <div class="hero-banner text-white p-8 md:p-12 rounded-3xl shadow-xl flex flex-col justify-center items-center text-center">
-                    <div class="bg-pattern"></div>
-                    <div class="relative z-10 w-full">
-                        <span class="bg-blue-500/30 border border-blue-400/40 text-blue-200 text-[10px] md:text-xs font-bold px-4 py-1.5 rounded-full mb-4 inline-block backdrop-blur-md">
-                            ورژن ۱.۰ - پلتفرم اختصاصی
+                <div class="hero-bg text-white p-8 md:p-12 rounded-3xl shadow-2xl flex flex-col justify-center items-center text-center border border-slate-800">
+                    <div class="relative z-10 w-full max-w-3xl">
+                        <span class="bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[10px] md:text-xs font-bold px-4 py-1.5 rounded-full mb-5 inline-block">
+                            بانک تست جامع کنکور
                         </span>
-                        <h2 class="text-4xl md:text-5xl font-lalezar mb-3 text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200">
-                            آزمایشگاه محاسباتی و تحلیلگر کنکور
+                        <h2 class="text-5xl md:text-7xl font-en-brand mb-4 text-white leading-tight">
+                            ChemPhys Pro
                         </h2>
-                        <p class="text-sm md:text-base text-indigo-200 mb-8 max-w-2xl mx-auto font-medium leading-7">
-                            هسته‌ی شبیه‌ساز آزمون با پشتیبانی از سوالات شیمی فیزیک و کوانتوم. آمار تست‌زنی، زمان‌بندی و گاوصندوق تکنیک‌های طلایی خود را در این محیط مدیریت کنید.
+                        <p class="text-sm md:text-base text-slate-300 mb-10 font-medium leading-8">
+                            محیط ایزوله برای شبیه‌سازی آزمون‌های ارشد و دکتری به همراه پاسخنامه فوق‌تشریحی و تکنیک‌های تست‌زنی زیر ۵ ثانیه.
                         </p>
                         
-                        <!-- کارت‌های آماری شیشه‌ای روی بک‌گراند -->
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto">
-                            <div class="glass-card rounded-2xl p-4 md:p-6 text-center hover:bg-white/20 transition cursor-default">
-                                <div class="text-3xl md:text-4xl mb-2 opacity-80">📚</div>
-                                <p class="text-[10px] md:text-xs text-indigo-200 font-bold mb-1">کل تست‌ها</p>
+                        <!-- آمار شیشه‌ای -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 mb-10">
+                            <div class="glass-stat rounded-2xl p-5 text-center">
+                                <p class="text-[10px] md:text-xs text-slate-300 font-bold mb-1">کل تست‌ها</p>
                                 <p class="text-3xl font-lalezar text-white" id="stat-total">165</p>
                             </div>
-                            <div class="glass-card rounded-2xl p-4 md:p-6 text-center hover:bg-white/20 transition cursor-default">
-                                <div class="text-3xl md:text-4xl mb-2 opacity-80">💎</div>
-                                <p class="text-[10px] md:text-xs text-indigo-200 font-bold mb-1">نکات طلایی</p>
-                                <p class="text-3xl font-lalezar text-amber-300">165</p>
+                            <div class="glass-stat rounded-2xl p-5 text-center">
+                                <p class="text-[10px] md:text-xs text-slate-300 font-bold mb-1">نکات طلایی</p>
+                                <p class="text-3xl font-lalezar text-amber-400">165</p>
                             </div>
-                            <div class="glass-card rounded-2xl p-4 md:p-6 text-center hover:bg-white/20 transition cursor-default">
-                                <div class="text-3xl md:text-4xl mb-2 opacity-80">⏱️</div>
-                                <p class="text-[10px] md:text-xs text-indigo-200 font-bold mb-1">میانگین زمان</p>
-                                <p class="text-3xl font-lalezar text-emerald-300">1.2m</p>
+                            <div class="glass-stat rounded-2xl p-5 text-center">
+                                <p class="text-[10px] md:text-xs text-slate-300 font-bold mb-1">شیمی فیزیک</p>
+                                <p class="text-3xl font-lalezar text-blue-300">110</p>
                             </div>
-                            <div class="glass-card rounded-2xl p-4 md:p-6 text-center hover:bg-white/20 transition cursor-default">
-                                <div class="text-3xl md:text-4xl mb-2 opacity-80">🎯</div>
-                                <p class="text-[10px] md:text-xs text-indigo-200 font-bold mb-1">دقت پاسخ‌گویی</p>
-                                <p class="text-3xl font-lalezar text-blue-300 dir-ltr">0%</p>
+                            <div class="glass-stat rounded-2xl p-5 text-center">
+                                <p class="text-[10px] md:text-xs text-slate-300 font-bold mb-1">کوانتوم</p>
+                                <p class="text-3xl font-lalezar text-purple-300">55</p>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- چارت راداری -->
-                    <div class="main-card p-6 md:p-8 flex flex-col justify-center items-center relative overflow-hidden">
-                        <div class="absolute -left-10 -top-10 w-40 h-40 bg-blue-50 rounded-full blur-3xl opacity-60"></div>
-                        <h4 class="text-lg font-lalezar text-slate-700 mb-6 w-full text-right border-b border-slate-100 pb-3 flex items-center gap-2">
-                            <span>📡</span> رادار تسلط بر مباحث
-                        </h4>
-                        <div class="relative w-full max-w-[280px] md:max-w-[320px] aspect-square">
-                            <canvas id="radarChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-6 flex flex-col justify-center">
-                        <div class="main-card p-6 md:p-8 border-r-4 border-r-rose-500 bg-gradient-to-l from-rose-50 to-white">
-                            <h4 class="text-lg font-lalezar text-rose-700 mb-3 flex items-center gap-2">
-                                <span>🔥</span> ترند طراحان کنکور (هوش مصنوعی)
-                            </h4>
-                            <p class="text-sm text-slate-700 leading-8 text-justify font-medium">
-                                تحلیل دیتابیس ۱۴۰۰ تا ۱۴۰۵ نشان می‌دهد: در مقطع <strong>ارشد</strong>، مبحث <span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">معادلات ماکسول و ترمودینامیک ۲</span> دارای بالاترین شانس تکرار است. در مقطع <strong>دکتری</strong>، تمرکز اصلی روی <span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">عملگرها و نوسانگر ناهماهنگ</span> کوانتوم است.
-                            </p>
-                        </div>
-                        
-                        <div class="main-card p-6 md:p-8 border-r-4 border-r-blue-500">
-                            <h4 class="text-lg font-lalezar text-blue-700 mb-3 flex items-center gap-2">
-                                <span>🚀</span> شروع سریع
-                            </h4>
-                            <p class="text-sm text-slate-600 mb-5">آماده‌اید تا رکورد جدیدی ثبت کنید؟</p>
-                            <button onclick="switchTab('exam')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-blue-200">
-                                ورود به شبیه‌ساز آزمون
-                            </button>
-                        </div>
+                        <!-- دکمه شروع سریع -->
+                        <button onclick="switchTab('exam')" class="w-full md:w-auto bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-lalezar text-xl py-4 px-12 rounded-2xl shadow-lg shadow-blue-500/30 transition-all transform hover:scale-105 border border-blue-400/50">
+                            🚀 ورود به شبیه‌ساز آزمون
+                        </button>
                     </div>
                 </div>
+                
             </section>
 
             <!-- شبیه‌ساز آزمون -->
             <section id="sec-exam" class="hidden space-y-6">
                 <!-- تنظیمات -->
-                <div id="exam-setup" class="main-card p-8 md:p-10 border-t-8 border-blue-600">
-                    <h3 class="text-3xl font-lalezar text-slate-800 mb-2">فیلتر و ساخت آزمون</h3>
+                <div id="exam-setup" class="main-card p-6 md:p-10 border-t-8 border-blue-600">
+                    <h3 class="text-2xl md:text-3xl font-lalezar text-slate-800 mb-2">فیلتر و ساخت آزمون</h3>
                     <p class="text-sm text-slate-500 mb-8 font-medium">مشخصات دفترچه را تعیین کرده و آزمون زمان‌دار را آغاز کنید.</p>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
@@ -222,8 +180,12 @@
                             <label class="block text-xs font-bold text-slate-500 mb-2">سال کنکور</label>
                             <select id="f-year" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-sm font-bold outline-none focus:border-blue-500 transition">
                                 <option value="all">۱۴۰۰ تا ۱۴۰۵ (جامع)</option>
+                                <option value="۱۴۰۵">فقط ۱۴۰۵</option>
+                                <option value="۱۴۰۴">فقط ۱۴۰۴</option>
+                                <option value="۱۴۰۳">فقط ۱۴۰۳</option>
                                 <option value="۱۴۰۲">فقط ۱۴۰۲</option>
                                 <option value="۱۴۰۱">فقط ۱۴۰۱</option>
+                                <option value="۱۴۰۰">فقط ۱۴۰۰</option>
                             </select>
                         </div>
                         <div>
@@ -243,7 +205,6 @@
 
                 <!-- محیط آزمون -->
                 <div id="exam-active" class="hidden">
-                    <!-- Progress Bar -->
                     <div class="bg-white rounded-2xl shadow-sm p-4 mb-4 sticky top-[68px] lg:top-0 z-30 border border-slate-200 flex flex-col gap-3">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-3">
@@ -252,12 +213,11 @@
                             </div>
                             <div id="timer-display" class="font-mono text-lg md:text-xl font-black text-rose-600 bg-rose-50 border border-rose-100 px-4 py-1 rounded-xl dir-ltr shadow-inner">30:00</div>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                            <div id="progress-bar" class="bg-gradient-to-r from-blue-400 to-indigo-600 h-2 rounded-full progress-bar-fill shadow-sm" style="width: 10%"></div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                            <div id="progress-bar" class="bg-gradient-to-r from-blue-400 to-indigo-600 h-1.5 rounded-full progress-bar-fill shadow-sm" style="width: 10%"></div>
                         </div>
                     </div>
 
-                    <!-- کارت سوال -->
                     <div class="main-card p-5 md:p-10 min-h-[450px] flex flex-col justify-between relative">
                         <div>
                             <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-100 pb-4">
@@ -272,7 +232,6 @@
                                 <button onclick="toggleBookmark()" id="btn-bookmark" class="text-2xl md:text-3xl text-slate-200 hover:text-amber-400 transition shrink-0 drop-shadow-sm" title="نشان‌کردن برای مرور">🔖</button>
                             </div>
                             
-                            <!-- محفظه عکس -->
                             <div id="q-image-container" class="hidden mb-6 text-center bg-slate-50 p-2 md:p-4 rounded-xl border border-slate-200">
                                 <img id="q-image" src="" class="max-h-48 md:max-h-64 mx-auto rounded shadow-sm cursor-zoom-in hover:opacity-90 transition">
                             </div>
@@ -291,26 +250,23 @@
 
                 <!-- کارنامه -->
                 <div id="exam-results" class="hidden space-y-6">
-                    <div class="hero-banner p-8 md:p-12 rounded-3xl text-center text-white relative overflow-hidden">
-                        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIi8+PC9zdmc+')] opacity-30"></div>
-                        <div class="relative z-10">
-                            <h3 class="text-3xl font-lalezar mb-8 text-amber-300 drop-shadow-md">گزارش عملکرد آزمون</h3>
-                            <div class="flex justify-center gap-4 md:gap-8 flex-wrap">
-                                <div class="glass-card p-4 md:p-6 rounded-2xl min-w-[90px] md:min-w-[120px] shadow-lg">
-                                    <p class="text-xs md:text-sm mb-2 text-indigo-200 font-bold">درصد کل</p>
-                                    <p id="res-percent" class="text-3xl md:text-5xl font-lalezar dir-ltr">0%</p>
-                                </div>
-                                <div class="glass-card p-4 md:p-6 rounded-2xl min-w-[90px] md:min-w-[120px] shadow-lg">
-                                    <p class="text-xs md:text-sm mb-2 text-emerald-200 font-bold">پاسخ صحیح</p>
-                                    <p id="res-correct" class="text-3xl md:text-5xl font-lalezar text-emerald-400">0</p>
-                                </div>
-                                <div class="glass-card p-4 md:p-6 rounded-2xl min-w-[90px] md:min-w-[120px] shadow-lg">
-                                    <p class="text-xs md:text-sm mb-2 text-rose-200 font-bold">پاسخ غلط</p>
-                                    <p id="res-wrong" class="text-3xl md:text-5xl font-lalezar text-rose-400">0</p>
-                                </div>
+                    <div class="hero-bg p-8 md:p-12 rounded-3xl text-center text-white border border-slate-800">
+                        <h3 class="text-3xl font-lalezar mb-8 text-amber-300 drop-shadow-md">گزارش عملکرد آزمون</h3>
+                        <div class="flex justify-center gap-4 md:gap-8 flex-wrap">
+                            <div class="glass-stat p-4 md:p-6 rounded-2xl min-w-[90px] md:min-w-[120px]">
+                                <p class="text-xs md:text-sm mb-2 text-indigo-200 font-bold">درصد کل</p>
+                                <p id="res-percent" class="text-3xl md:text-5xl font-lalezar dir-ltr">0%</p>
                             </div>
-                            <button onclick="resetExam()" class="mt-10 bg-white text-indigo-900 px-8 py-3 rounded-xl font-black text-sm shadow-xl hover:bg-slate-100 transition">اجرای آزمون جدید</button>
+                            <div class="glass-stat p-4 md:p-6 rounded-2xl min-w-[90px] md:min-w-[120px]">
+                                <p class="text-xs md:text-sm mb-2 text-emerald-200 font-bold">پاسخ صحیح</p>
+                                <p id="res-correct" class="text-3xl md:text-5xl font-lalezar text-emerald-400">0</p>
+                            </div>
+                            <div class="glass-stat p-4 md:p-6 rounded-2xl min-w-[90px] md:min-w-[120px]">
+                                <p class="text-xs md:text-sm mb-2 text-rose-200 font-bold">پاسخ غلط</p>
+                                <p id="res-wrong" class="text-3xl md:text-5xl font-lalezar text-rose-400">0</p>
+                            </div>
                         </div>
+                        <button onclick="resetExam()" class="mt-10 bg-white text-indigo-900 px-8 py-3 rounded-xl font-black text-sm shadow-xl hover:bg-slate-100 transition">اجرای آزمون جدید</button>
                     </div>
                     <div id="results-list" class="space-y-5"></div>
                 </div>
@@ -318,7 +274,7 @@
             
             <!-- دپارتمان گاوصندوق -->
             <section id="sec-vault" class="hidden space-y-6">
-                <!-- در توسعه‌های بعدی دیتابیس اینجا تزریق میشه -->
+                <!-- جایگاه تزریق دیتابیس نکات -->
             </section>
             
              <!-- دپارتمان نشان‌شده‌ها -->
@@ -332,7 +288,7 @@
         </div>
     </main>
 
-    <!-- دیتابیس لوکال برای تست ظاهر (موقتی تا وقتی پایتون رو بگیری) -->
+    <!-- دیتابیس لوکال برای تست ظاهر (موقتی) -->
     <script>
         const QUESTION_BANK = [
             {
@@ -389,7 +345,6 @@
             const mobileNav = document.getElementById('mobile-nav');
             if(mobileNav) mobileNav.value = tabId;
 
-            if(tabId === 'dashboard') initRadarChart();
             renderMathJax();
         }
 
@@ -466,64 +421,7 @@
             document.getElementById('exam-setup').style.display = 'block';
         }
 
-        let radarInst = null;
-        function initRadarChart() {
-            const ctx = document.getElementById('radarChart');
-            if(!ctx) return;
-            
-            // فونت چارت رو با فونت‌های سایت هماهنگ می‌کنیم
-            Chart.defaults.font.family = 'Vazirmatn';
-            
-            if(radarInst) radarInst.destroy();
-            radarInst = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['ترمودینامیک', 'سینتیک', 'محلول‌ها', 'عملگرها', 'نوسانگر/جعبه'],
-                    datasets: [{
-                        label: 'درصد تسلط',
-                        data: [85, 60, 90, 40, 75],
-                        backgroundColor: 'rgba(37, 99, 235, 0.25)',
-                        borderColor: '#2563eb',
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#2563eb',
-                        pointHoverBackgroundColor: '#2563eb',
-                        pointHoverBorderColor: '#ffffff',
-                        borderWidth: 2,
-                        pointRadius: 4,
-                    }]
-                },
-                options: { 
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { 
-                        r: { 
-                            beginAtZero: true, 
-                            max: 100, 
-                            ticks:{display:false},
-                            pointLabels: {
-                                font: { size: 12, family: 'Vazirmatn', weight: 'bold' },
-                                color: '#475569'
-                            },
-                            grid: { color: '#e2e8f0' },
-                            angleLines: { color: '#e2e8f0' }
-                        } 
-                    }, 
-                    plugins:{
-                        legend:{display:false},
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            titleFont: { family: 'Vazirmatn', size: 13 },
-                            bodyFont: { family: 'Vazirmatn', size: 14, weight: 'bold' },
-                            padding: 12,
-                            cornerRadius: 8,
-                            displayColors: false
-                        }
-                    } 
-                }
-            });
-        }
-        
-        window.onload = () => { initRadarChart(); renderMathJax(); };
+        window.onload = () => { renderMathJax(); };
     </script>
 </body>
                     </html>
