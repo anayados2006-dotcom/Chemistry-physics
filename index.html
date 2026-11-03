@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پلتفرم هوشمند کنکور شیمی فیزیک | طراحی: عباس فتاحی</title>
+    <title>پلتفرم هوشمند کنکور شیمی فیزیک | طراح: عباس فتاحی</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- تنظیمات MathJax برای رندر فوق‌سریع فرمول‌های کنکور -->
     <script>
         window.MathJax = {
             tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
@@ -13,432 +15,722 @@
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; overflow: hidden; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
-        .neon-border { border-left: 4px solid #38bdf8; }
-        .nav-active { background: linear-gradient(90deg, rgba(56,189,248,0.15) 0%, transparent 100%); border-right: 4px solid #38bdf8; color: #38bdf8; font-weight: 800; }
-        .nav-btn { transition: all 0.3s ease; border-right: 4px solid transparent; }
-        .nav-btn:hover:not(.nav-active) { background: rgba(255,255,255,0.05); color: #e2e8f0; }
-        .math-box { background: #1e293b; border-right: 4px solid #f59e0b; padding: 15px; border-radius: 10px; color: #f8fafc; overflow-x: auto; direction: ltr; text-align: left;}
-        .timer-glow { text-shadow: 0 0 10px #ef4444, 0 0 20px #ef4444; }
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 0; overflow: hidden; }
+        /* استایل منوی کناری دسکتاپ */
+        .sidebar { background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%); box-shadow: -4px 0 25px rgba(0,0,0,0.1); }
+        .nav-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-right: 4px solid transparent; color: #a5b4fc; }
+        .nav-active { background: rgba(255,255,255,0.1); color: #ffffff; border-right: 4px solid #818cf8; font-weight: 800; }
+        .nav-btn:hover:not(.nav-active) { background: rgba(255,255,255,0.05); color: #e0e7ff; }
+        
+        .main-card { background: #ffffff; border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); }
+        .hero-banner { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); position: relative; overflow: hidden; }
+        
+        /* استایل‌های اختصاصی آزمون */
+        .option-label { transition: all 0.2s; border: 2px solid #e5e7eb; cursor: pointer; }
+        .option-label:hover { border-color: #a5b4fc; background: #eef2ff; }
+        .option-input:checked + .option-label { border-color: #4f46e5; background: #eef2ff; font-weight: bold; }
+        
+        .math-box { background: #fefce8; border-right: 4px solid #facc15; padding: 15px; border-radius: 0.75rem; font-size: 1rem; color: #374151; overflow-x: auto;}
+        .tip-box { background: #ecfdf5; border-right: 4px solid #10b981; padding: 15px; border-radius: 0.75rem; font-size: 0.95rem; }
+        
+        .dir-ltr { direction: ltr; text-align: left; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="flex h-screen">
 
-    <!-- سایدبار امنیتی و داشبورد -->
-    <aside class="w-72 glass-panel h-full flex flex-col justify-between hidden lg:flex shrink-0 z-20 border-r border-slate-700/50">
-        <div>
-            <div class="p-6 border-b border-slate-700/50 text-center relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-sky-500/20 rounded-full blur-3xl"></div>
-                <div class="w-16 h-16 bg-gradient-to-br from-sky-400 to-blue-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg shadow-sky-500/30">🚀</div>
-                <h1 class="text-xl font-black text-white tracking-tight">VIP KONKUR</h1>
-                <p class="text-[10px] text-sky-400 font-black mt-1 bg-sky-900/40 py-1 px-3 rounded-full border border-sky-500/30">شبیه‌ساز و آنالیزور شیمی فیزیک</p>
+    <!-- منوی کناری (Sidebar) -->
+    <aside class="sidebar w-72 h-full flex flex-col justify-between hidden lg:flex shrink-0 z-20">
+        <div class="overflow-y-auto p-5">
+            <div class="p-4 border-b border-indigo-800/50 text-center mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-indigo-400 to-purple-500 text-white rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg shadow-indigo-900/50">🚀</div>
+                <h1 class="text-xl font-black text-white">کنکور پلاس شیمی فیزیک</h1>
+                <p class="text-xs text-indigo-300 font-medium mt-1">پلتفرم هوشمند ارشد و دکتری</p>
             </div>
             
-            <nav class="flex flex-col mt-4 gap-1 px-3">
-                <button onclick="switchTab(1)" id="btn-tab1" class="nav-btn nav-active py-3.5 px-4 rounded-xl text-right text-sm font-semibold flex items-center gap-3">
-                    <span class="text-lg">📊</span> داشبورد آنالیز آماری
+            <nav class="flex flex-col gap-2">
+                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn nav-active py-3.5 px-4 rounded-xl text-right text-sm flex items-center gap-3">
+                    <span class="text-lg">📊</span> داشبورد آماری
                 </button>
-                <button onclick="switchTab(2)" id="btn-tab2" class="nav-btn py-3.5 px-4 rounded-xl text-right text-slate-400 text-sm font-semibold flex items-center gap-3">
+                <button onclick="switchTab('exam')" id="btn-exam" class="nav-btn py-3.5 px-4 rounded-xl text-right text-sm flex items-center gap-3">
                     <span class="text-lg">⏱️</span> شبیه‌ساز آزمون زمان‌دار
                 </button>
-                <button onclick="switchTab(3)" id="btn-tab3" class="nav-btn py-3.5 px-4 rounded-xl text-right text-slate-400 text-sm font-semibold flex items-center gap-3">
+                <button onclick="switchTab('vault')" id="btn-vault" class="nav-btn py-3.5 px-4 rounded-xl text-right text-sm flex items-center gap-3">
                     <span class="text-lg">💎</span> گاوصندوق نکات طلایی
                 </button>
-                <button onclick="switchTab(4)" id="btn-tab4" class="nav-btn py-3.5 px-4 rounded-xl text-right text-slate-400 text-sm font-semibold flex items-center gap-3">
-                    <span class="text-lg">🧮</span> ماشین‌حساب‌های تستی
+                <button onclick="switchTab('about')" id="btn-about" class="nav-btn py-3.5 px-4 rounded-xl text-right text-sm flex items-center gap-3 mt-4 border border-indigo-500/30">
+                    <span class="text-lg">👨‍💻</span> ارتباط با طراح
                 </button>
             </nav>
         </div>
-        
-        <div class="p-4 border-t border-slate-700/50">
-            <div class="bg-gradient-to-r from-blue-900/50 to-indigo-900/50 p-4 rounded-2xl border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.2)] text-center relative overflow-hidden">
-                <div class="text-[10px] text-blue-200 font-bold mb-1">طراحی، توسعه و کُدگذاری:</div>
-                <div class="text-lg font-black text-white">عباس فتاحی</div>
-                <a href="https://t.me/Abbasfattahi" target="_blank" class="mt-3 inline-flex items-center justify-center w-full gap-2 bg-sky-500 hover:bg-sky-400 text-slate-900 font-black text-xs py-2 px-3 rounded-xl transition">
-                    <span>تلگرام:</span>
-                    <span class="font-mono dir-ltr">@Abbasfattahi</span>
+
+        <!-- کارت امضای عباس فتاحی -->
+        <div class="p-5 border-t border-indigo-800/50 bg-indigo-950/40">
+            <div class="text-right">
+                <div class="text-[10px] text-indigo-300 font-medium mb-1">معمار و توسعه‌دهنده سیستم:</div>
+                <div class="text-lg font-black text-white mb-2">مهندس عباس فتاحی</div>
+                <a href="https://t.me/Abbasfattahi" target="_blank" class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-mono py-2.5 px-4 rounded-xl transition shadow-md">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.892-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                    @Abbasfattahi
                 </a>
             </div>
         </div>
     </aside>
 
-    <!-- محتوای اصلی -->
-    <main class="flex-1 h-full overflow-y-auto relative scroll-smooth bg-[#0a0f1c] bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0f1c] to-black">
+    <!-- بخش اصلی محتوا -->
+    <main class="flex-1 h-full overflow-y-auto relative scroll-smooth bg-slate-100">
         
         <!-- هدر موبایل -->
-        <div class="lg:hidden glass-panel p-4 sticky top-0 z-40 border-b border-slate-800 flex justify-between items-center">
+        <div class="lg:hidden bg-indigo-900 text-white p-4 sticky top-0 z-40 shadow-md flex justify-between items-center">
             <div>
-                <h1 class="font-black text-white text-base">VIP KONKUR</h1>
-                <a href="https://t.me/Abbasfattahi" target="_blank" class="text-[10px] font-bold text-sky-400">طراح: عباس فتاحی (@Abbasfattahi)</a>
+                <h1 class="font-black text-sm">کنکور پلاس | شیمی فیزیک</h1>
+                <a href="https://t.me/Abbasfattahi" class="text-[10px] text-indigo-300">طراح: عباس فتاحی</a>
             </div>
-            <select onchange="switchTab(parseInt(this.value))" id="mobile-nav" class="bg-slate-800 border border-slate-600 rounded-xl p-2 text-xs font-bold text-white outline-none">
-                <option value="1">📊 داشبورد آنالیز</option>
-                <option value="2">⏱️ آزمون زمان‌دار</option>
-                <option value="3">💎 گاوصندوق نکات</option>
-                <option value="4">🧮 محاسبه‌گرهای تستی</option>
+            <select onchange="switchTab(this.value)" id="mobile-nav" class="bg-indigo-800 border-none rounded-lg p-2 text-xs font-bold outline-none text-white">
+                <option value="dashboard">📊 داشبورد</option>
+                <option value="exam">⏱️ شبیه‌ساز آزمون</option>
+                <option value="vault">💎 نکات طلایی</option>
+                <option value="about">👨‍💻 ارتباط با طراح</option>
             </select>
         </div>
 
-        <div class="p-4 md:p-8 max-w-6xl mx-auto space-y-6 pb-24">
+        <div class="p-4 md:p-8 max-w-5xl mx-auto space-y-6 pb-24">
             
-            <!-- تب ۱: داشبورد آنالیز آماری -->
-            <section id="tab1" class="space-y-6">
-                <div class="glass-panel p-6 md:p-10 rounded-3xl relative overflow-hidden">
-                    <div class="absolute -right-10 -bottom-10 text-9xl opacity-5">📈</div>
-                    <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-                        <div>
-                            <span class="bg-sky-500/20 text-sky-300 text-xs font-bold px-3 py-1 rounded-full border border-sky-500/30">آنالیز کنکور ۱۴۰۰ تا ۱۴۰۵</span>
-                            <h2 class="text-2xl md:text-3xl font-black mt-3 mb-2 text-white">رادار هوشمند کنکور ارشد</h2>
-                            <p class="text-slate-400 text-sm">استخراج روند تست‌دهی اساتید طراح در دروس ترمودینامیک، سینتیک و کوانتوم.</p>
+            <!-- بنر هدر اصلی (مخفی در محیط آزمون) -->
+            <div id="main-banner" class="hero-banner text-white p-6 md:p-10 rounded-3xl shadow-xl relative">
+                <div class="absolute -right-10 -bottom-10 text-9xl opacity-10">🧠</div>
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="space-y-3 w-full">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-md">موتور تست‌زنی آفلاین</span>
+                            <span class="bg-yellow-400/90 text-indigo-900 text-xs font-black px-3 py-1 rounded-full shadow-sm">ارشد و دکتری</span>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-black tracking-tight">پلتفرم هوشمند آنالیز و شبیه‌سازی کنکور</h2>
+                        <p class="text-indigo-100 text-sm max-w-xl leading-relaxed">
+                            شامل سوالات شیمی فیزیک ۱، ۲ و کوانتوم (۱۴۰۰ تا ۱۴۰۵). همراه با پاسخ‌نامه فوق‌تشریحی و گاوصندوق تکنیک‌های طلایی زیر ۵ ثانیه.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- دپارتمان ۱: داشبورد آماری -->
+            <!-- ========================================== -->
+            <section id="sec-dashboard" class="space-y-6 block">
+                <div class="main-card p-6 md:p-8">
+                    <h3 class="text-xl font-black text-slate-800 mb-6 border-b border-slate-100 pb-4 flex items-center gap-3">
+                        <span class="text-2xl">📊</span> آنالیز هوشمند کنکورهای اخیر
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-indigo-50 rounded-2xl p-5 border border-indigo-100 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-500 font-bold mb-1">کل تست‌های دیتابیس</p>
+                                <p class="text-3xl font-black text-indigo-700 font-mono" id="stat-total">0</p>
+                            </div>
+                            <div class="text-4xl opacity-50">📚</div>
+                        </div>
+                        <div class="bg-emerald-50 rounded-2xl p-5 border border-emerald-100 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-500 font-bold mb-1">تکنیک‌های طلایی استخراج شده</p>
+                                <p class="text-3xl font-black text-emerald-700 font-mono" id="stat-tips">0</p>
+                            </div>
+                            <div class="text-4xl opacity-50">💎</div>
+                        </div>
+                        <div class="bg-rose-50 rounded-2xl p-5 border border-rose-100 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-500 font-bold mb-1">متوسط زمان پاسخگویی</p>
+                                <p class="text-2xl font-black text-rose-700 font-mono">1.5 Min</p>
+                            </div>
+                            <div class="text-4xl opacity-50">⏱️</div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- چارت ۱ -->
-                        <div class="bg-slate-800/50 p-5 rounded-2xl border border-slate-700 flex flex-col items-center">
-                            <h3 class="text-sm font-bold text-sky-400 mb-4">بودجه‌بندی موضوعی (۵ سال اخیر)</h3>
-                            <div class="w-full max-w-[220px]">
-                                <canvas id="chartPie"></canvas>
-                            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                            <h4 class="text-sm font-bold text-slate-700 mb-4 text-center">پراکندگی موضوعی سوالات</h4>
+                            <div class="relative w-full h-64"><canvas id="pieChart"></canvas></div>
                         </div>
-                        <!-- چارت ۲ -->
-                        <div class="bg-slate-800/50 p-5 rounded-2xl border border-slate-700 lg:col-span-2">
-                            <h3 class="text-sm font-bold text-amber-400 mb-4">میزان تکرار تله‌های تستی پرتکرار</h3>
-                            <div class="w-full h-[220px]">
-                                <canvas id="chartBar"></canvas>
-                            </div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-center">
+                            <h4 class="text-sm font-bold text-slate-700 mb-4 text-center">توصیه سیستم هوشمند</h4>
+                            <p class="text-sm text-slate-600 leading-7 mb-4">
+                                بر اساس تحلیل فایل‌های کنکور، بیشترین تمرکز طراحان در <strong class="text-indigo-600">شیمی فیزیک ۱</strong> روی "روابط ماکسول و قانون دوم"، در <strong class="text-indigo-600">شیمی فیزیک ۲</strong> روی "سینتیک و تقریب حالت پایا" و در <strong class="text-indigo-600">کوانتوم</strong> روی "نوسانگر هماهنگ و عملگرها" بوده است.
+                            </p>
+                            <button onclick="switchTab('exam')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-md">شروع آزمون جامع</button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- تب ۲: شبیه‌ساز آزمون زمان‌دار -->
-            <section id="tab2" class="hidden space-y-6">
-                <div class="glass-panel p-6 md:p-8 rounded-3xl">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-slate-700 pb-4 gap-4">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-rose-500/20 text-rose-400 p-3 rounded-xl text-xl">⏱️</div>
-                            <div>
-                                <h3 class="text-xl font-black text-white">شبیه‌ساز فوق‌پیشرفته آزمون</h3>
-                                <p class="text-xs text-slate-400 mt-1">تست‌های منتخب، دارای تله‌های استخراج‌شده از کدهای رمزنگاری‌شده.</p>
-                            </div>
-                        </div>
-                        <div id="exam-timer" class="text-3xl font-black font-mono text-rose-500 timer-glow hidden">15:00</div>
-                    </div>
-
-                    <!-- صفحه شروع آزمون -->
-                    <div id="exam-setup" class="text-center py-10 space-y-6">
-                        <div class="text-6xl mb-4">🎯</div>
-                        <h4 class="text-xl font-bold text-white">آماده چالش هستی؟</h4>
-                        <p class="text-slate-400 text-sm max-w-md mx-auto">آزمون شامل ۵ تست به‌شدت مفهومی از کنکورهای سال اخیر است. پاسخ‌های تشریحی و میانبرها تنها برای تست‌هایی که غلط بزنی باز خواهد شد!</p>
-                        <button onclick="startExam()" class="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-black py-3 px-10 rounded-full text-lg shadow-[0_0_20px_rgba(244,63,94,0.4)] transition transform hover:scale-105">
+            <!-- ========================================== -->
+            <!-- دپارتمان ۲: شبیه‌ساز آزمون زمان‌دار -->
+            <!-- ========================================== -->
+            <section id="sec-exam" class="hidden space-y-6">
+                
+                <!-- مرحله تنظیم آزمون -->
+                <div id="exam-setup" class="main-card p-6 md:p-10 text-center">
+                    <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">⏱️</div>
+                    <h3 class="text-2xl font-black text-slate-800 mb-2">تنظیمات شبیه‌ساز آزمون</h3>
+                    <p class="text-sm text-slate-500 mb-8">مبحث مورد نظر خود را انتخاب کنید تا آزمون در محیطی ایزوله و زمان‌دار آغاز شود.</p>
+                    
+                    <div class="max-w-md mx-auto space-y-4">
+                        <select id="exam-category" class="w-full bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-xl p-3.5 outline-none focus:border-indigo-500 font-bold">
+                            <option value="all">میکس جامع (شیمی فیزیک ۱، ۲ و کوانتوم)</option>
+                            <option value="شیمی فیزیک ۱">فقط شیمی فیزیک ۱</option>
+                            <option value="شیمی فیزیک ۲">فقط شیمی فیزیک ۲ (سینتیک و محلول)</option>
+                            <option value="کوانتوم">فقط شیمی کوانتوم</option>
+                        </select>
+                        <select id="exam-time" class="w-full bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-xl p-3.5 outline-none focus:border-indigo-500 font-bold">
+                            <option value="15">آزمون سرعتی (۱۵ دقیقه)</option>
+                            <option value="30">آزمون استاندارد (۳۰ دقیقه)</option>
+                            <option value="0">بدون محدودیت زمان (تمرینی)</option>
+                        </select>
+                        <button onclick="startExam()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black py-4 rounded-xl shadow-lg shadow-indigo-200 transition text-lg mt-4">
                             شروع آزمون
                         </button>
                     </div>
-
-                    <!-- کانتینر سوالات آزمون -->
-                    <div id="exam-container" class="hidden space-y-8">
-                        <div id="questions-area" class="space-y-8"></div>
-                        <div class="text-center pt-6 border-t border-slate-700">
-                            <button onclick="submitExam()" class="bg-sky-500 hover:bg-sky-400 text-slate-900 font-black py-3 px-12 rounded-xl text-lg transition">پایان آزمون و ثبت کارنامه</button>
-                        </div>
-                    </div>
-
-                    <!-- کانتینر کارنامه -->
-                    <div id="result-container" class="hidden space-y-6 py-6">
-                        <div class="text-center bg-slate-800/50 p-8 rounded-3xl border border-slate-700">
-                            <h2 class="text-2xl font-black text-white mb-2">کارنامه هوشمند شما</h2>
-                            <div id="score-display" class="text-5xl font-black font-mono text-sky-400 mb-4"></div>
-                            <p class="text-slate-400 text-sm">درصد پاسخگویی خالص (با احتساب نمره منفی)</p>
-                        </div>
-                        <div id="analysis-area" class="space-y-6 mt-8"></div>
-                    </div>
                 </div>
-            </section>
 
-            <!-- تب ۳: گاوصندوق نکات طلایی -->
-            <section id="tab3" class="hidden space-y-6">
-                <div class="glass-panel p-6 md:p-8 rounded-3xl">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-700 pb-4 gap-4">
+                <!-- محیط در حال برگزاری آزمون -->
+                <div id="exam-active" class="hidden">
+                    <!-- نوار وضعیت بالای آزمون -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-4 flex justify-between items-center sticky top-0 z-30">
+                        <div class="flex items-center gap-4">
+                            <button onclick="abortExam()" class="text-xs bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg font-bold hover:bg-rose-200 transition">پایان آزمون</button>
+                            <span class="text-sm font-bold text-slate-600">سوال <span id="q-current" class="text-indigo-600 font-black">1</span> از <span id="q-total">10</span></span>
+                        </div>
+                        <div id="timer-display" class="font-mono text-xl font-black text-slate-800 bg-slate-100 px-4 py-1.5 rounded-xl border border-slate-200 dir-ltr">
+                            00:00
+                        </div>
+                    </div>
+
+                    <!-- کارت سوال -->
+                    <div class="main-card p-6 md:p-8 min-h-[400px] flex flex-col justify-between">
                         <div>
-                            <h3 class="text-xl font-black text-amber-400 flex items-center gap-2"><span>💎</span> گاوصندوق میانبرهای تستی</h3>
-                            <p class="text-xs text-slate-400 mt-1">جستجوی آنی در الگوریتم‌های تستی کدگذاری شده (کوانتوم، ترمو، سینتیک)</p>
-                        </div>
-                        <input type="text" id="tips-search" oninput="filterTips()" placeholder="🔍 کلمه کلیدی (مثل: کوانتوم، کارنو، هسته...)" class="bg-slate-800 border border-slate-600 rounded-xl p-3 text-sm w-full md:w-72 outline-none focus:border-amber-400 text-white placeholder-slate-500 transition">
-                    </div>
-                    <div id="tips-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-                </div>
-            </section>
-
-            <!-- تب ۴: ماشین‌حساب‌های تستی -->
-            <section id="tab4" class="hidden space-y-6">
-                <div class="glass-panel p-6 md:p-8 rounded-3xl">
-                    <div class="flex items-center gap-3 mb-6 border-b border-slate-700 pb-4">
-                        <div class="bg-emerald-500/20 text-emerald-400 p-2.5 rounded-xl text-xl">🧮</div>
-                        <h3 class="text-xl font-black text-white">ماشین‌حساب‌های تقلب حلال!</h3>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- ماشین حساب سینتیک -->
-                        <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-2xl">
-                            <h4 class="font-black text-emerald-400 text-sm mb-3">۱. هکر مرتبه واکنش (از روی زمان نیمه عمر)</h4>
-                            <p class="text-[11px] text-slate-400 mb-3">طبق تست ۱۴۰۳، توان غلظت اولیه در فرمول نیمه‌عمر برابر با $1-n$ است.</p>
-                            <div class="flex items-center gap-3 mb-4">
-                                <label class="text-xs text-slate-300">توان غلظت اولیه ($C_0$) در فرمول:</label>
-                                <input id="calc-power" type="number" step="0.5" value="0.5" oninput="calcOrder()" class="w-20 bg-slate-900 border border-slate-600 rounded-lg p-2 text-center text-white outline-none focus:border-emerald-500">
+                            <div class="flex justify-between items-center mb-4">
+                                <span id="q-tag" class="text-[10px] font-black bg-indigo-100 text-indigo-700 px-2 py-1 rounded">دسته‌بندی</span>
+                                <span id="q-year" class="text-[10px] font-black bg-slate-100 text-slate-500 border border-slate-200 px-2 py-1 rounded">سال ۱۴۰۰</span>
                             </div>
-                            <div id="order-out" class="bg-emerald-900/30 p-3 rounded-xl border border-emerald-500/30 text-emerald-300 font-black text-center font-mono"></div>
-                        </div>
-
-                        <!-- ماشین حساب چندحالتی -->
-                        <div class="bg-slate-800/60 border border-slate-700 p-5 rounded-2xl">
-                            <h4 class="font-black text-purple-400 text-sm mb-3">۲. محاسبه‌گر سریع چندحالتی (دژنراسیون)</h4>
-                            <p class="text-[11px] text-slate-400 mb-3">تست‌های پرتکرار چرخنده سه‌بعدی و اتم هیدروژن بدون اسپین.</p>
-                            <div class="space-y-3 mb-4">
-                                <div class="flex items-center gap-3">
-                                    <label class="text-xs text-slate-300 w-32">چرخنده سه‌بعدی ($J$):</label>
-                                    <input id="calc-j" type="number" value="2" oninput="calcDegen()" class="w-16 bg-slate-900 border border-slate-600 rounded-lg p-1.5 text-center text-white outline-none">
-                                    <span id="deg-j-out" class="text-purple-300 font-mono font-bold text-sm"></span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <label class="text-xs text-slate-300 w-32">هیدروژن بدون اسپین ($n$):</label>
-                                    <input id="calc-n" type="number" value="3" oninput="calcDegen()" class="w-16 bg-slate-900 border border-slate-600 rounded-lg p-1.5 text-center text-white outline-none">
-                                    <span id="deg-n-out" class="text-purple-300 font-mono font-bold text-sm"></span>
-                                </div>
+                            <h4 id="q-text" class="text-base md:text-lg font-bold text-slate-800 leading-8 mb-6">متن سوال در اینجا قرار می‌گیرد...</h4>
+                            
+                            <!-- تصویر سوال (در صورت وجود) -->
+                            <div id="q-image-container" class="hidden mb-6 text-center">
+                                <img id="q-image" src="" alt="Question Image" class="max-w-full h-auto mx-auto rounded-lg border border-slate-200 shadow-sm">
                             </div>
+
+                            <div id="options-container" class="space-y-3 mb-8">
+                                <!-- گزینه‌ها توسط JS پر می‌شوند -->
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between border-t border-slate-100 pt-4 mt-4">
+                            <button onclick="prevQuestion()" id="btn-prev" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition disabled:opacity-50 disabled:cursor-not-allowed">قبلی</button>
+                            <button onclick="nextQuestion()" id="btn-next" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition">بعدی</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- کارنامه و تحلیل آزمون -->
+                <div id="exam-results" class="hidden space-y-6">
+                    <div class="main-card p-6 md:p-8 text-center bg-gradient-to-br from-indigo-900 to-purple-900 text-white border-none">
+                        <h3 class="text-2xl font-black mb-6">کارنامه هوشمند آزمون</h3>
+                        <div class="flex flex-wrap justify-center gap-4 md:gap-8">
+                            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[120px] border border-white/20">
+                                <p class="text-xs text-indigo-200 mb-1">درصد کل</p>
+                                <p id="res-percent" class="text-3xl font-black font-mono dir-ltr text-emerald-400">0%</p>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[120px] border border-white/20">
+                                <p class="text-xs text-indigo-200 mb-1">پاسخ صحیح</p>
+                                <p id="res-correct" class="text-3xl font-black font-mono text-white">0</p>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[120px] border border-white/20">
+                                <p class="text-xs text-indigo-200 mb-1">پاسخ غلط</p>
+                                <p id="res-wrong" class="text-3xl font-black font-mono text-rose-400">0</p>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 min-w-[120px] border border-white/20">
+                                <p class="text-xs text-indigo-200 mb-1">نزده</p>
+                                <p id="res-empty" class="text-3xl font-black font-mono text-slate-300">0</p>
+                            </div>
+                        </div>
+                        <button onclick="resetExam()" class="mt-8 bg-white text-indigo-900 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-100 transition shadow-lg">آزمون مجدد</button>
+                    </div>
+
+                    <!-- لیست تحلیل سوالات -->
+                    <div id="results-list" class="space-y-4">
+                        <!-- توسط JS پر می‌شود -->
+                    </div>
+                </div>
+
             </section>
+
+            <!-- ========================================== -->
+            <!-- دپارتمان ۳: گاوصندوق نکات طلایی -->
+            <!-- ========================================== -->
+            <section id="sec-vault" class="hidden space-y-6">
+                <div class="main-card p-6 md:p-8">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-slate-100 pb-6">
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-black text-slate-800 flex items-center gap-3">
+                                <span class="text-2xl">💎</span> گاوصندوق تکنیک‌های ۵ ثانیه‌ای
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-2">جستجو در میانبرهای استخراج شده از تحلیل‌های مهندس فتاحی</p>
+                        </div>
+                        <div class="w-full md:w-72 relative">
+                            <input type="text" id="tip-search" oninput="filterTips()" placeholder="جستجوی کلمه (مثال: آدیاباتیک، اوربیتال)..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pr-10 text-sm outline-none focus:border-indigo-500 transition">
+                            <span class="absolute right-3 top-3 opacity-40">🔍</span>
+                        </div>
+                    </div>
+                    
+                    <div id="tips-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- کارت‌های نکته توسط JS تولید می‌شوند -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- دپارتمان ۴: درباره طراح -->
+            <!-- ========================================== -->
+            <section id="sec-about" class="hidden space-y-6">
+                <div class="main-card p-8 text-center max-w-2xl mx-auto border-t-4 border-indigo-600">
+                    <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-5xl mx-auto mb-4 border-4 border-white shadow-lg">👨‍💻</div>
+                    <h3 class="text-2xl font-black text-slate-800 mb-2">مهندس عباس فتاحی</h3>
+                    <p class="text-indigo-600 font-bold text-sm mb-6">طراح و توسعه‌دهنده پلتفرم‌های هوشمند آموزشی</p>
+                    
+                    <p class="text-sm text-slate-600 leading-7 mb-8 text-justify bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        این پلتفرم به عنوان یک ابزار جامع و کاملاً مستقل (آفلاین) برای شبیه‌سازی و تحلیل تست‌های کنکور ارشد و دکتری شیمی فیزیک توسعه یافته است. هدف از طراحی این نرم‌افزار، جایگزینی فایل‌های استاتیک با یک موتور تعاملی است که نه تنها درصدگیری می‌کند، بلکه با سیستم قفل تشریحی، کاربر را مجبور به یادگیری از روی اشتباهاتش می‌کند.
+                    </p>
+                    
+                    <a href="https://t.me/Abbasfattahi" target="_blank" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg shadow-indigo-200 text-lg">
+                        ارتباط در تلگرام
+                        <span class="font-mono dir-ltr text-sm bg-white/20 px-2 py-0.5 rounded ml-2">@Abbasfattahi</span>
+                    </a>
+                </div>
+            </section>
+
         </div>
     </main>
 
+    <!-- دیتابیس جاوااسکریپت و منطق اپلیکیشن -->
     <script>
-        // =========================================================================
-        // بخش امنیتی: رمزگشایی دیتابیس تست‌ها و نکات در لحظه اجرا (Obfuscation Demo)
-        // =========================================================================
-        
-        // این رشته Base64 حاوی دیتابیس واقعی است که از دسترسی مستقیم پنهان شده
-        const _0xdbEnc = "W3siaWQiOjEsInF1ZXN0aW9uIjoi2KjYsdin24wg2qnYrdiv2KfZhSDY حال2Kog2KfYqtmFINmH24zYr9ix2YjamNmGINiq2KfYqNi5INmF2YjYrSAoXFxwc2kpINiv2LEg2YfYs9iq2Ycg2LXZgdi1INmG24zYs9iq248iLCJvcHRpb25zIjpbInMiLCJwIiwiZCIsImYiXSwiY29ycmVjdCI6MCwiZXhwbGFuYXRpb24iOiLZgtin2YbZiNmGINi32YTYp9uM24w6INiv2LEg2YfYs9iq2Ycg2YHYgdi3IChzKSDYsdin2Ycg2K/Yp9ix2K8hINio2LHYp9uMINin2YjYsdio24zYqtin2YQocykgbT0wINin2LPYqiDZiCDYqtin2KjYuSDZhdmI2Kwg2K/YsSDYtNi52KfYuSDYtdmB2LEsIG3Zgtiv2KfYsSDYutin2KjYqiDZiCDYutin2LEg2LXZgdi1INiv2KfYsdivLiDYqNmC24zZhyDYp9mI2LHYqNuM2KrYp9mE4oCM2YfYpyDYr9in2LHYp9uMINqv2LHYhyDYr9ixINmH2LPYqtmHINmH2LPYqtmG2K8uIn0seyJpZCI6MiwicXVlc3Rpb24iOiLYr9ixINqG2Ycg2LTYsdin24zYt9uMINmF24zigIzRqtin2YYg2KjYsdin24wg2YjYp9qp2YbYtSBBIOKGkiBCIOKGkiBDINin2LIg2KrZgtix24zYqCDYحال2Kog2b7Yp9uM2KcgKFNTQSkg2KfYs9iq2YHYp9iv2Ycg2qnYsdiv248iLCJvcHRpb25zIjpbImtfMSA8IGtfMiIsImtfMSA8PCBrXzIiLCJrXzIgPDwga18xIiwia18yIDwgaygxIl0sImNvcnJlY3QiOjEsImV4cGxhbmF0aW9uIjoi2qnZhNuM2K8g2KrYs9iq24w6ICfZhdi12LHYgeKAjNqp2YbZhtiv2Ycg2YjYp9iz2LfZhyDYqNin24zYryDYp9iyINiq2YjZhNuM2K/igIzaqdmG2YbYr9mH4oCM2KfYtCDZgtmI24zigIzRqtixINio2KfYtNivJy4g2KjZhtin2KjYsdin24zZhiBrXzIg2KjYp9uM2K8g2KjYs9uM2KfYsSDYr9ix2q/YqtixINin2LIga18xINio2KfYtNivIChrXzEgPDwgayBfMikuIn0seyJpZCI6MywicXVlc3Rpb24iOiLaqdiv2KfZhSDYrNmF2YTZhyDYr9ix2KjYp9ix2Ycg2KfZhtio2LPYp9i3INii2K/bjNin2KjYp9iq24zaqSDar9in2LIg2qnYp9mF2YQg2K/Ysdiz2Kog2KfYs9iq248iLCJvcHRpb25zIjpbItiv2YXYp9uMINmG2YfYp9uM24wg2KjYsdin2KjYsSDYqtinINiv2YXYp9uMINin2YjZhNuM2Ycg2KfYs9iqLiIsItiv2YXYp9uMINmG2YfYp9uM24wg2YfZhdmI2KfYsdivINin2LIg2K/Zhdin24wg2KfZiNmE24zZhyDYqNiy2LHar9iq2LEg2KfYs9iqLiIsItiv2YXYp9uMINmG2YfYp9uM24wg2YfZhdmI2KfYsdivINin2LIg2K/Zhdin24wg2KfZiNmE24zZhyA2qnZiNqG2qnRqtixINin2LPYqi4iLCLYr9mF2KfbjCDZhtmH2KfbjNuMINmH2YXZiNin2LHYryDYqNmHINin2YbYr9in2LLZhyB5ayDZhdmC2K/Yp9ixINir2KfYqNiqINin2LIg2K/Zhdin24wg2KfZiNmE24zZhyDYqNiy2LHar9iq2LEg2KfYs9iqLiJdLCJjb3JyZWN0IjoyLCJleHBsYW5hdGlvbiI6Itqp2K8g2KrYs9iq24w6INin2Ybar9iz2KfYtyDYqNuM4oCM2K/Ysdix2Ygg2YXYs9in2YjbjCDYp9iz2Kog2KjYpyDYs9ix2K8g2LTYr9mGINqv2KfYsi4g2K/YsSDYp9mG2KjYs9in2Lcg2KLYr9uM2KfYqNin2KrbjNmMINqv2KfYsiDaqdin2LEg2KfZhtis2KfZhSDZhduM4oCM2K/ZhdivINmIINin2YbYsQ==\";
-        const _0xdbEnc2 = "2pjbjCDYr9ix2YjZhtuM2Kwg2qnYp9mH2LQg2YXbjOKAjduM2KfYqdivICgke1xcRGVsdGEgVSA8IDB9JCk7INm+2LMg2K/ZhdinINqp2KfZhdivINmF24zigIzbjNin2KjYry4ifSx7ImlkIjo0LCJxdWVzdGlvbiI6ItmG2LPYqNiqINmG2LHYriDYqNix2K7ZiNix2K8g2KjZhyDYs9ix2LnYqiDYqNix2K7ZiNix2K8g2KjYsdin24wg2q/Yp9iyINmH2YTZjNmI2YUg2qnYr9in2YUg2KfYs9iq248iLCJvcHRpb25zIjpbIlxcKFxccGkgZF4yIFxccmhvXFwpIiwiXFwoXFxwaSBkXjIgKFxcZnJhY3tOfXtWfSlcXCkiLCJcXChcXHNxcnR7Mn1cXHBpIGReMiBcXHJob1xcKSIsIuKAnNi624zYsduM2K/igJwgKDJcXHBpIGReMiBcXHJobykiXSwiY29ycmVjdCI6MSwiZXhwbGFuYXRpb24iOiLZhti42LHbjNmHINis2YbYqNi024wg2q/Yp9iy2YfYpzog2YHYsdqp2KfZhtizINio2LHYrtmI2LHYryAoJFpfMSQpINiq2YLYs9uM2YUg2KjYsSDYs9ix2LnYqiDYqNix2K7ZiNix2K8gKCRcXG92ZXJsaW5le3Z9X3tyZWx9JCkg2KjYsdin2KjYsSDYp9iz2Kog2KjYpyDYs9i32K0g2YXZgdi32Lkg2KjYsdOudmI2LHYryAoJFxccGkgZF4yJCkg2K/YsSDZhtmC2LfYqiDYudiv2K/bjCAoJFxccmhvID0gTixWJCkuIn0seyJpZCI6NSwicXVlc3Rpb24iOiLYr9ixINmF2K3ZhNmI2YQgaWRlYWwg2YjYp9mC2qrbjCDYqNix2KfbjCDar9mI2YbZhyAxINmC2KfZhtmI2YYg2YfZhtix24wg2KjZhyDaqdin2LEg2YXbjOKAjdix2YjYrywgZSBfaSDZhdit2KfZhNmC24wg2qnYr9in2YUg2KfYs9iq248iLCJvcHRpb25zIjpbImFfMSA9IHhfMSIsIlxcZ2FtbWFfMSBcXHJpZ2h0YXJyb3cgMSIsImFfMSA9IFxcZ2FtbWFfMSB4XzEiLCJhXzEgPSBrX0ggeF8xIl0sImNvcnJlY3QiOjMsImV4cGxhbmF0aW9uIjoi2b7Yp9iz2K4g2qrbjNqp2LMg2KLYstmF2YjZhiDYp9ix2LTYrjog2K/YsSDYsdiC2Kog2KjbjOKAjZmG2YfYp9uM2Kog2qnZhyBx2YfZhtix24wg2K3Yp9qp2YUg2KfYs9iqICgkeF8xIFxccmlnaHRhcnJvdyAwJCksINmB2LnYp9mE24zYqiDYqtinINqp2LPYsSDZhdmI2YTbjCDYsdin2KjYt9mHINiu2LfbjCDYr9in2LHYryDZiCDYttix24zYqCDYqtmG2KfYs9ioINmH2YXYp9mGINir2KfYqNiqINmH2YbYsduMINin2LPYqiAoJGFfMSA9IGtfSCB4XzEkKS4ifV0=";
-        const examQuestions = JSON.parse(atob(_0xdbEnc) + atob(_0xdbEnc2));
-
-        const tipsDB = [
-            { tag: "کوانتوم", title: "مکانیک کوانتومی: تقارن عملگرها و جابه‌جاسازها", body: "قانون طلایی: در یک سیستم مرکزی (مثل اتم هیدروژن)، عملگر همیلتونی ($\\hat{H}$) با عملگرهای $\\hat{L}^2$ و $\\hat{L}_z$ جابه‌جا می‌شود. اما $\\hat{H}$ با $\\hat{x}$ یا $\\hat{p}_x$ هرگز جابه‌جا نمی‌شود، مگر در ذرات آزاد." },
-            { tag: "ترمودینامیک", title: "قانون کارنو و آنتروپی چرخه", body: "تله کنکوری: در هر چرخه برگشت‌پذیر (مانند کارنو)، تغییرات کل آنتروپی ($\\Delta S_{total}$) صفر است. بنابراین همیشه $\\frac{q_h}{T_h} + \\frac{q_c}{T_c} = 0$." },
-            { tag: "سینتیک", title: "تکنیک شیب نمودار $ln[A]$", body: "هر زمان نمودار $ln[A]$ بر حسب $t$ نزولی بود، شیب آن برابر با منفی ثابت سرعت ضرب‌در عکس ضریب استوکیومتری است. علامت شیب حتماً منفی است." },
-            { tag: "شیمی فیزیک ۱", title: "تبدیل فاز و دسته‌بندی ارنفست", body: "نوع اول: پرش در $V$ و $S$ (مشتقات اول $G$).<br>نوع دوم: پیوستگی در $V$ و $S$، اما پرش در $C_p$، $\\alpha$ و $\\kappa$ (مشتقات دوم $G$)." },
-            { tag: "ترمودینامیک", title: "اثر ژول و ژول-تامسون", body: "برای گاز کامل ایده‌آل، هم ضریب ژول ($\\mu_J$) و هم ضریب ژول-تامسون ($\\mu_{JT}$) دقیقاً صفر است." }
+        // ==========================================
+        // 1. DATABASE (JSON Array)
+        // ==========================================
+        // این آرایه قلب سایت شماست. شما می‌توانید هزاران تست را دقیقاً با همین الگو در اینجا وارد کنید.
+        const QUESTION_BANK = [
+            {
+                id: 101,
+                subject: "شیمی فیزیک ۱",
+                year: "کنکور ۱۴۰۰",
+                q_text: "مشتق $(\\frac{\\partial^2 S}{\\partial T^2})_P$ با کدام گزینه برابر است؟",
+                has_image: false,
+                image_url: "", // مثال: "images/q101.jpg"
+                options: [
+                    "$\\frac{1}{T}(\\frac{\\partial C_p}{\\partial V})_P + \\frac{C_p}{T}$",
+                    "$\\frac{1}{T}(\\frac{\\partial C_p}{\\partial V})_P - \\frac{C_p}{V}$",
+                    "$\\frac{1}{T}(\\frac{\\partial C_p}{\\partial T})_P + \\frac{C_p}{T^2}$",
+                    "$\\frac{1}{T}(\\frac{\\partial C_p}{\\partial T})_P - \\frac{C_p}{T^2}$"
+                ],
+                answer: 3, // ایندکس گزینه صحیح (از 0 شروع می‌شود، پس 3 یعنی گزینه 4)
+                tashrihi: "میدانیم در فشار ثابت $dS = \\frac{C_p}{T}dT$. با مشتق‌گیری مجدد: $(\\frac{\\partial^2 S}{\\partial T^2})_P = \\frac{\\partial}{\\partial T}(\\frac{C_p}{T})_P$. طبق قاعده مشتق کسر $(\\frac{u}{v})' = \\frac{u'v - v'u}{v^2}$، صورت برابر $\\frac{\\partial C_p}{\\partial T}$ و مخرج T است. پس به عبارت $\\frac{1}{T}(\\frac{\\partial C_p}{\\partial T})_P - \\frac{C_p}{T^2}$ می‌رسیم.",
+                tip: "چون در مخرج کسر اصلی $T$ داریم، طبق قاعده مشتق کسر حتماً باید علامت منفی پشت $T^2$ ظاهر شود. پس گزینه‌های ۱ و ۳ (مثبت) بلافاصله حذف می‌شوند. از طرفی چون مشتق نسبت به T است، در مخرج باید $T^2$ باشد نه $V$."
+            },
+            {
+                id: 102,
+                subject: "شیمی فیزیک ۱",
+                year: "کنکور ۱۴۰۰",
+                q_text: "کدام عبارت درباره انبساط آدیاباتیک یک گاز کامل درست است؟",
+                has_image: false,
+                image_url: "",
+                options: [
+                    "دمای نهایی و دمای اولیه با هم برابرند.",
+                    "دمای نهایی همواره از دمای اولیه بزرگتر است.",
+                    "دمای نهایی همواره از دمای اولیه کوچکتر است.",
+                    "دمای نهایی همواره به اندازه یک مقدار ثابت از دمای اولیه بزرگتر است."
+                ],
+                answer: 2,
+                tashrihi: "در فرآیند آدیاباتیک $q=0$ است. طبق قانون اول $\\Delta U = q + w = w$. در انبساط، گاز روی محیط کار انجام می‌دهد ($w < 0$)، پس $\\Delta U < 0$ می‌شود. چون برای گاز کامل انرژی درونی فقط تابع دماست ($\\Delta U = nC_v\\Delta T$)، منفی شدن آن به معنای کاهش دماست ($T_{final} < T_{initial}$).",
+                tip: "این کدگذاری ذهنی را به خاطر بسپارید: «انبساط بی‌دررو = سرد شدن گاز». هر جا در تست کلمه «انبساط آدیاباتیک» آمد، فوراً دنبال گزینه‌ای بگردید که می‌گوید دما کاهش می‌یابد."
+            },
+            {
+                id: 201,
+                subject: "شیمی فیزیک ۲",
+                year: "کنکور ۱۴۰۰",
+                q_text: "در چه شرایطی می‌توان برای واکنش $A \\xrightarrow{k_1} B \\xrightarrow{k_2} C$ از تقریب حالت پایا استفاده کرد؟",
+                has_image: false,
+                image_url: "",
+                options: [
+                    "فقط اگر $k_1 < k_2$",
+                    "فقط اگر $k_1 \\ll k_2$",
+                    "فقط اگر $k_2 < k_1$",
+                    "فقط اگر $k_2 \\gg k_1$"
+                ],
+                answer: 1, 
+                tashrihi: "تقریب حالت پایا (SSA) زمانی معتبر است که غلظت ماده واسط (B) در طول زمان تغییر ناچیزی داشته باشد $\\frac{d[B]}{dt} \\approx 0$. این امر مستلزم آن است که نرخ مصرف واسطه بسیار سریع‌تر از نرخ تولید آن باشد تا واسطه فرصت تجمع پیدا نکند. یعنی $k_2 \\gg k_1$ که معادل $k_1 \\ll k_2$ است.",
+                tip: "قانون طلایی SSA: «مصرف‌کننده واسطه باید از تولیدکننده‌اش قوی‌تر باشد». در این واکنش $k_2$ واسطه را مصرف می‌کند، پس $k_2$ باید بسیار بزرگتر از $k_1$ باشد."
+            },
+            {
+                id: 301,
+                subject: "کوانتوم",
+                year: "کنکور ۱۴۰۰",
+                q_text: "برای کدام حالت اتم هیدروژن مقدار تابع موج $\\Psi$ در هسته صفر نیست؟",
+                has_image: false,
+                image_url: "",
+                options: [
+                    "s",
+                    "p",
+                    "f",
+                    "d"
+                ],
+                answer: 0,
+                tashrihi: "در بخش شعاعی تابع موج اتم هیدروژن، رفتار تابع در نزدیکی هسته با $r^l$ متناسب است. برای اوربیتال s مقدار $l=0$ است، پس $r^0 = 1$ و تابع در هسته مقدار غیر صفر دارد. برای سایر اوربیتال‌ها (p,d,f) چون $l \\ge 1$ است، در $r=0$ مقدار تابع صفر می‌شود.",
+                tip: "قانون طلایی هسته: «در هسته فقط (اس) راه دارد!». هر اوربیتالی که $l > 0$ باشد (مثل p, d, f) مقدار تابع موج آن در هسته قطعا صفر است."
+            },
+            {
+                id: 302,
+                subject: "کوانتوم",
+                year: "کنکور ۱۴۰۰",
+                q_text: "کدام جمله درباره ترازهای انرژی یک نوسانگر خطی درست است؟",
+                has_image: false,
+                image_url: "",
+                options: [
+                    "دارای چندحالتی $(n + \\frac{1}{2})$ گانه هستند.",
+                    "دارای چندحالتی $(2n + 1)$ گانه هستند.",
+                    "تمام ترازهای آن بدون چندحالتی هستند.",
+                    "دارای چندحالتی $n-1$ گانه هستند."
+                ],
+                answer: 2,
+                tashrihi: "در مکانیک کوانتومی، نوسانگر هماهنگ خطی (یک‌بعدی) دارای سطوح انرژی $E_n = (n + \\frac{1}{2})\\hbar\\omega$ است. برای هر مقدار انرژی فقط یک تابع موج مستقل وجود دارد. بنابراین تمام ترازهای آن غیرمنجل (Non-degenerate) یا بدون چندحالتی هستند.",
+                tip: "میانبر: هر وقت در سوال کلمه «خطی» یا «یک‌بعدی» را برای نوسانگر یا جعبه دیدید، شک نکنید که سیستم تک‌حالتی (غیرمنجل) است. طراح با فرمول‌های پیچیده می‌خواهد شما را گمراه کند."
+            }
         ];
 
-        let chartPie, chartBar, examInterval;
-        let currentQuestion = 0;
-        let timeRemaining = 900; 
-        let userAnswers = [];
+        // ==========================================
+        // 2. EXAM ENGINE LOGIC
+        // ==========================================
+        let currentExamQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // { questionId: selectedOptionIndex }
+        let timerInterval;
+        let timeLeft = 0; // ثانیه
+
+        // آپدیت داشبورد در شروع
+        document.getElementById('stat-total').innerText = QUESTION_BANK.length;
+        document.getElementById('stat-tips').innerText = QUESTION_BANK.filter(q => q.tip).length;
 
         function renderMathJax() {
-            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-                window.MathJax.typesetPromise().catch(console.warn);
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise().catch(err => console.log('MathJax error:', err));
             }
         }
 
-        function switchTab(num) {
-            [1, 2, 3, 4].forEach(i => {
-                const el = document.getElementById('tab' + i);
-                const btn = document.getElementById('btn-tab' + i);
-                if (el) el.classList.toggle('hidden', i !== num);
-                if (btn) {
-                    btn.classList.toggle('nav-active', i === num);
-                    btn.classList.toggle('text-slate-400', i !== num);
+        function switchTab(tabId) {
+            ['dashboard', 'exam', 'vault', 'about'].forEach(id => {
+                document.getElementById('sec-' + id).style.display = (id === tabId) ? 'block' : 'none';
+                const btn = document.getElementById('btn-' + id);
+                if(btn) {
+                    if (id === tabId) { btn.classList.add('nav-active'); } 
+                    else { btn.classList.remove('nav-active'); }
                 }
             });
-            document.getElementById('mobile-nav').value = num;
-            if (num === 1) initCharts();
-            if (num === 3) filterTips();
-            renderMathJax();
-        }
-
-        // ==========================================
-        // تب ۱: چارت‌های آنالیز
-        // ==========================================
-        function initCharts() {
-            if (chartPie) chartPie.destroy();
-            if (chartBar) chartBar.destroy();
-
-            Chart.defaults.color = '#94a3b8';
-            Chart.defaults.font.family = 'Vazirmatn';
-
-            const ctxPie = document.getElementById('chartPie').getContext('2d');
-            chartPie = new Chart(ctxPie, {
-                type: 'doughnut',
-                data: {
-                    labels: ['ترمودینامیک', 'کوانتوم', 'سینتیک', 'الکتروشیمی'],
-                    datasets: [{
-                        data: [40, 25, 20, 15],
-                        backgroundColor: ['#38bdf8', '#c084fc', '#34d399', '#f472b6'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: { cutout: '75%', plugins: { legend: { position: 'bottom' } } }
-            });
-
-            const ctxBar = document.getElementById('chartBar').getContext('2d');
-            chartBar = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: ['قوانین ماکسول', 'نوسانگر هماهنگ', 'تقریب حالت پایا', 'اثر ژول-تامسون', 'الکترولیت‌ها'],
-                    datasets: [{
-                        label: 'دفعات تکرار در ۵ سال اخیر',
-                        data: [8, 5, 6, 7, 4],
-                        backgroundColor: 'rgba(56, 189, 248, 0.5)',
-                        borderColor: '#38bdf8',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } }
-            });
-        }
-
-        // ==========================================
-        // تب ۲: سیستم آزمون
-        // ==========================================
-        function startExam() {
-            document.getElementById('exam-setup').classList.add('hidden');
-            document.getElementById('exam-container').classList.remove('hidden');
-            document.getElementById('exam-timer').classList.remove('hidden');
+            document.getElementById('main-banner').style.display = (tabId === 'exam' && document.getElementById('exam-active').style.display === 'block') ? 'none' : 'block';
             
-            const qArea = document.getElementById('questions-area');
-            qArea.innerHTML = '';
-            userAnswers = new Array(examQuestions.length).fill(null);
-
-            examQuestions.forEach((q, idx) => {
-                let optionsHtml = '';
-                q.options.forEach((opt, oIdx) => {
-                    optionsHtml += `
-                        <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-700 bg-slate-800/40 hover:bg-slate-700/60 cursor-pointer transition">
-                            <input type="radio" name="q${idx}" value="${oIdx}" onchange="saveAnswer(${idx}, ${oIdx})" class="w-4 h-4 text-sky-500 bg-slate-900 border-slate-600 focus:ring-sky-500 focus:ring-2">
-                            <span class="text-sm text-slate-200 dir-ltr text-right w-full">${opt}</span>
-                        </label>
-                    `;
-                });
-
-                qArea.innerHTML += `
-                    <div class="bg-slate-800/60 border border-slate-700 p-6 rounded-2xl">
-                        <h4 class="font-bold text-white mb-4 leading-8"><span class="text-sky-400 bg-sky-900/30 px-2 py-1 rounded mr-1">${idx+1}</span> ${q.question}</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">${optionsHtml}</div>
-                        <div id="exp-${idx}" class="hidden mt-4 p-4 bg-rose-900/20 border-l-4 border-rose-500 rounded-lg text-sm text-slate-300 leading-7"></div>
-                    </div>
-                `;
-            });
-
-            timeRemaining = 900;
-            examInterval = setInterval(updateTimer, 1000);
+            if(tabId === 'dashboard') initChart();
+            if(tabId === 'vault') renderTips();
             renderMathJax();
         }
 
-        function saveAnswer(qIdx, optIdx) { userAnswers[qIdx] = optIdx; }
+        function startExam() {
+            const category = document.getElementById('exam-category').value;
+            const timeMins = parseInt(document.getElementById('exam-time').value);
+            
+            // فیلتر سوالات
+            if (category === 'all') {
+                currentExamQuestions = [...QUESTION_BANK].sort(() => 0.5 - Math.random()); // Shuffle
+            } else {
+                currentExamQuestions = QUESTION_BANK.filter(q => q.subject === category).sort(() => 0.5 - Math.random());
+            }
+
+            if (currentExamQuestions.length === 0) {
+                alert("سوالی برای این مبحث در دیتابیس یافت نشد!");
+                return;
+            }
+
+            // ریست متغیرها
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            document.getElementById('q-total').innerText = currentExamQuestions.length;
+            
+            // تنظیم UI
+            document.getElementById('main-banner').style.display = 'none';
+            document.getElementById('exam-setup').classList.add('hidden');
+            document.getElementById('exam-results').classList.add('hidden');
+            document.getElementById('exam-active').classList.remove('hidden');
+            document.getElementById('exam-active').style.display = 'block';
+            
+            // تایمر
+            clearInterval(timerInterval);
+            if (timeMins > 0) {
+                timeLeft = timeMins * 60;
+                document.getElementById('timer-display').style.display = 'block';
+                timerInterval = setInterval(updateTimer, 1000);
+            } else {
+                document.getElementById('timer-display').style.display = 'none';
+            }
+
+            renderQuestion();
+        }
 
         function updateTimer() {
-            timeRemaining--;
-            let m = Math.floor(timeRemaining / 60);
-            let s = timeRemaining % 60;
-            document.getElementById('exam-timer').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            if (timeRemaining <= 0) submitExam();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                abortExam();
+                alert("زمان آزمون به پایان رسید!");
+                return;
+            }
+            timeLeft--;
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${m}:${s}`;
         }
 
-        function submitExam() {
-            clearInterval(examInterval);
-            document.getElementById('exam-timer').classList.add('hidden');
-            document.getElementById('exam-container').classList.add('hidden');
-            const resCont = document.getElementById('result-container');
-            resCont.classList.remove('hidden');
+        function renderQuestion() {
+            const q = currentExamQuestions[currentQuestionIndex];
+            document.getElementById('q-current').innerText = currentQuestionIndex + 1;
+            document.getElementById('q-tag').innerText = q.subject;
+            document.getElementById('q-year').innerText = q.year;
+            document.getElementById('q-text').innerText = q.q_text;
 
-            let correct = 0;
-            let wrong = 0;
-            let analysisHtml = '';
+            // نمایش عکس اگر دارد
+            const imgCont = document.getElementById('q-image-container');
+            const imgTag = document.getElementById('q-image');
+            if (q.has_image && q.image_url) {
+                imgTag.src = q.image_url;
+                imgCont.classList.remove('hidden');
+            } else {
+                imgCont.classList.add('hidden');
+            }
 
-            examQuestions.forEach((q, idx) => {
-                const userAns = userAnswers[idx];
-                const expDiv = document.getElementById(`exp-${idx}`);
-                
-                if (userAns === q.correct) {
+            const optsCont = document.getElementById('options-container');
+            optsCont.innerHTML = '';
+            
+            q.options.forEach((optText, index) => {
+                const isChecked = userAnswers[q.id] === index ? 'checked' : '';
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <input type="radio" name="q-opt" id="opt-${index}" value="${index}" class="hidden option-input" ${isChecked} onchange="saveAnswer(${q.id}, ${index})">
+                    <label for="opt-${index}" class="option-label block p-4 rounded-xl text-sm text-slate-700 dir-ltr text-right">
+                        ${optText}
+                    </label>
+                `;
+                optsCont.appendChild(div);
+            });
+
+            document.getElementById('btn-prev').disabled = (currentQuestionIndex === 0);
+            
+            const btnNext = document.getElementById('btn-next');
+            if (currentQuestionIndex === currentExamQuestions.length - 1) {
+                btnNext.innerText = 'پایان و ثبت آزمون';
+                btnNext.classList.replace('bg-indigo-600', 'bg-rose-600');
+                btnNext.classList.replace('hover:bg-indigo-700', 'hover:bg-rose-700');
+                btnNext.onclick = abortExam;
+            } else {
+                btnNext.innerText = 'بعدی';
+                btnNext.classList.replace('bg-rose-600', 'bg-indigo-600');
+                btnNext.classList.replace('hover:bg-rose-700', 'hover:bg-indigo-700');
+                btnNext.onclick = nextQuestion;
+            }
+
+            renderMathJax();
+        }
+
+        function saveAnswer(qId, optIndex) {
+            userAnswers[qId] = optIndex;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentExamQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function abortExam() {
+            clearInterval(timerInterval);
+            document.getElementById('exam-active').style.display = 'none';
+            document.getElementById('exam-results').classList.remove('hidden');
+            generateResults();
+        }
+
+        function generateResults() {
+            let correct = 0; let wrong = 0; let empty = 0;
+            const resList = document.getElementById('results-list');
+            resList.innerHTML = '';
+
+            currentExamQuestions.forEach((q, index) => {
+                const userAns = userAnswers[q.id];
+                let isCorrect = false;
+                let statusHtml = '';
+                let borderClass = '';
+
+                if (userAns === undefined) {
+                    empty++;
+                    statusHtml = `<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded text-[10px] font-bold">پاسخ نداده</span>`;
+                    borderClass = 'border-slate-300';
+                } else if (userAns === q.answer) {
                     correct++;
+                    isCorrect = true;
+                    statusHtml = `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">پاسخ صحیح</span>`;
+                    borderClass = 'border-emerald-400';
                 } else {
-                    if (userAns !== null) wrong++;
-                    // فقط برای غلط یا نزده پاسخ تشریحی را نشان می‌دهیم
-                    analysisHtml += `
-                        <div class="bg-slate-800/80 border border-rose-500/50 p-5 rounded-2xl">
-                            <h4 class="font-bold text-white mb-2 text-sm">سؤال ${idx+1}</h4>
-                            <p class="text-xs text-rose-400 mb-3">پاسخ شما اشتباه بود یا بی‌پاسخ ماند.</p>
-                            <div class="text-sm text-slate-300 leading-7 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                                <strong>تله تستی و پاسخ:</strong><br> ${q.explanation}
+                    wrong++;
+                    statusHtml = `<span class="bg-rose-100 text-rose-700 px-2 py-1 rounded text-[10px] font-bold">پاسخ غلط</span>`;
+                    borderClass = 'border-rose-400';
+                }
+
+                // قفل تشریحی: فقط اگر غلط زده یا نزده باشد، توضیحات کامل باز می‌شود.
+                // اگر درست زده باشد، فقط یک پیام تشویقی می‌بیند.
+                let explanationHtml = '';
+                if (!isCorrect) {
+                    explanationHtml = `
+                        <div class="mt-4 pt-4 border-t border-slate-100 space-y-3">
+                            <div class="math-box text-sm leading-7">
+                                <b class="text-indigo-800">تحلیل تشریحی:</b><br> ${q.tashrihi}
+                            </div>
+                            <div class="tip-box text-sm leading-7">
+                                <b class="text-emerald-800">💡 نکته طلایی (تکنیک تستی):</b><br> ${q.tip}
                             </div>
                         </div>
                     `;
+                } else {
+                    explanationHtml = `
+                        <div class="mt-4 pt-4 border-t border-slate-100 text-center">
+                            <span class="text-emerald-600 font-bold text-sm">احسنت! شما به این تست پاسخ صحیح دادید. 🎉</span>
+                        </div>
+                    `;
                 }
+
+                const card = document.createElement('div');
+                card.className = `bg-white p-5 rounded-2xl border-l-4 ${borderClass} shadow-sm`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xs font-black text-slate-400">تست ${index + 1}</span>
+                        ${statusHtml}
+                    </div>
+                    <p class="text-sm font-bold text-slate-800 mb-3">${q.q_text}</p>
+                    <p class="text-xs text-slate-500 mb-1">گزینه صحیح: <span class="font-mono bg-slate-100 px-1 rounded dir-ltr text-slate-800 inline-block">${q.options[q.answer]}</span></p>
+                    ${userAns !== undefined && !isCorrect ? `<p class="text-xs text-rose-500 mb-3">پاسخ شما: <span class="font-mono bg-rose-50 px-1 rounded dir-ltr inline-block">${q.options[userAns]}</span></p>` : ''}
+                    ${explanationHtml}
+                `;
+                resList.appendChild(card);
             });
 
-            // محاسبه درصد با نمره منفی
-            const total = examQuestions.length;
-            const score = ((correct * 3) - wrong) / (total * 3) * 100;
-            document.getElementById('score-display').innerText = Math.max(0, score).toFixed(1) + '%';
+            const total = currentExamQuestions.length;
+            const percent = (((correct * 3) - wrong) / (total * 3)) * 100;
             
-            if(analysisHtml === '') analysisHtml = '<div class="text-center text-emerald-400 font-bold p-6">تبریک! تمام تست‌ها را درست پاسخ دادید.</div>';
-            document.getElementById('analysis-area').innerHTML = analysisHtml;
+            document.getElementById('res-correct').innerText = correct;
+            document.getElementById('res-wrong').innerText = wrong;
+            document.getElementById('res-empty').innerText = empty;
+            document.getElementById('res-percent').innerText = Math.max(0, percent).toFixed(1) + "%";
+            document.getElementById('res-percent').className = percent > 50 ? "text-3xl font-black font-mono dir-ltr text-emerald-400" : "text-3xl font-black font-mono dir-ltr text-rose-400";
+            
             renderMathJax();
         }
 
+        function resetExam() {
+            document.getElementById('exam-results').classList.add('hidden');
+            document.getElementById('exam-setup').classList.remove('hidden');
+            document.getElementById('main-banner').style.display = 'block';
+        }
+
         // ==========================================
-        // تب ۳: گاوصندوق نکات طلایی
+        // 3. GOLDEN TIPS VAULT
         // ==========================================
+        function renderTips(filterText = '') {
+            const grid = document.getElementById('tips-grid');
+            grid.innerHTML = '';
+            
+            const tips = QUESTION_BANK.filter(q => q.tip && (q.tip.includes(filterText) || q.subject.includes(filterText)));
+            
+            if(tips.length === 0) {
+                grid.innerHTML = `<p class="text-slate-500 text-sm col-span-2 text-center py-8">نکته‌ای یافت نشد!</p>`;
+                return;
+            }
+
+            tips.forEach(q => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl border border-emerald-100 hover:shadow-lg transition flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-1 rounded-md font-bold mb-3 inline-block">${q.subject}</span>
+                        <h4 class="text-sm font-black text-slate-800 mb-3">${q.q_text}</h4>
+                        <div class="tip-box text-xs md:text-sm leading-7 text-emerald-900 border-none bg-emerald-50">
+                            ${q.tip}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            renderMathJax();
+        }
+
         function filterTips() {
-            const q = document.getElementById('tips-search').value.toLowerCase();
-            const list = document.getElementById('tips-list');
-            const filtered = tipsDB.filter(t => t.title.toLowerCase().includes(q) || t.body.toLowerCase().includes(q) || t.tag.toLowerCase().includes(q));
+            const val = document.getElementById('tip-search').value;
+            renderTips(val);
+        }
+
+        // ==========================================
+        // 4. CHART.JS DASHBOARD
+        // ==========================================
+        let pieChartInst = null;
+        function initChart() {
+            const ctx = document.getElementById('pieChart');
+            if(!ctx) return;
             
-            list.innerHTML = filtered.map(t => `
-                <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700 hover:border-amber-500/50 transition">
-                    <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-md font-black">${t.tag}</span>
-                    <h3 class="text-sm font-bold text-white mt-3 mb-2">${t.title}</h3>
-                    <p class="text-xs text-slate-400 leading-6">${t.body}</p>
-                </div>
-            `).join('');
-            renderMathJax();
+            let c1 = 0, c2 = 0, q = 0;
+            QUESTION_BANK.forEach(item => {
+                if(item.subject === 'شیمی فیزیک ۱') c1++;
+                else if(item.subject === 'شیمی فیزیک ۲') c2++;
+                else q++;
+            });
+
+            if(pieChartInst) pieChartInst.destroy();
+            
+            pieChartInst = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['شیمی فیزیک ۱', 'شیمی فیزیک ۲', 'کوانتوم'],
+                    datasets: [{
+                        data: [c1, c2, q],
+                        backgroundColor: ['#4f46e5', '#ec4899', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { family: 'Vazirmatn' } } }
+                    },
+                    cutout: '70%'
+                }
+            });
         }
 
-        // ==========================================
-        // تب ۴: ماشین‌حساب‌های تستی
-        // ==========================================
-        function calcOrder() {
-            const pow = parseFloat(document.getElementById('calc-power').value) || 0;
-            // pow = 1 - n => n = 1 - pow
-            const n = 1 - pow;
-            document.getElementById('order-out').innerHTML = `مرتبه واکنش ($n$) = ${n}`;
-            renderMathJax();
-        }
-
-        function calcDegen() {
-            const J = parseInt(document.getElementById('calc-j').value) || 0;
-            const n = parseInt(document.getElementById('calc-n').value) || 1;
-            document.getElementById('deg-j-out').innerText = `2J+1 = ${(2*J)+1}`;
-            document.getElementById('deg-n-out').innerText = `n² = ${n*n}`;
-        }
-
+        // مقداردهی اولیه
         window.onload = () => {
-            initCharts();
-            filterTips();
-            calcOrder();
-            calcDegen();
-        };
+            initChart();
+            renderMathJax();
+        }
     </script>
 </body>
 </html>
